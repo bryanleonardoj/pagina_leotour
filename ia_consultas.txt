@@ -1,0 +1,182 @@
+================================================================================
+LEOTOUR — Evaluación Sumativa N°2 (TI3031)
+Archivo: ia_consultas.txt
+Documenta los prompts usados con IA durante el desarrollo del proyecto.
+================================================================================
+
+
+==============================
+1. CARRUSEL DE IMÁGENES
+==============================
+
+PROMPT 1:
+"Necesito implementar un carrusel de imágenes en JavaScript puro (vanilla)
+que cumpla con estos requisitos:
+- Mostrar al menos 6 imágenes (destinos turísticos de Chile)
+- Botones 'Anterior' y 'Siguiente' que modifiquen el DOM dinámicamente
+- Cambio automático cada 5 segundos
+- Indicadores tipo 'dots' clickeables para saltar a una imagen específica
+- Que el auto-play se pause al pasar el mouse sobre el carrusel
+- Sin usar librerías externas tipo Swiper o Slick
+
+El HTML tiene esta estructura:
+<div class='carousel-track'>
+  <div class='carousel-item' style='background-image: url(...)'></div>
+  ... (6 items)
+</div>
+<button class='carousel-prev'></button>
+<button class='carousel-next'></button>
+<div class='carousel-indicators'>
+  <span class='carousel-dot' data-slide='0'></span>
+  ...
+</div>"
+
+RESPUESTA APLICADA:
+- Se usó translateX(-N*100%) sobre el contenedor track para desplazar slides
+- setInterval con id guardado en variable para poder reiniciarlo con clearInterval
+- Función goToSlide(i) que usa módulo (i % total) para hacer loop infinito
+- Event listeners en next, prev, dots y mouseenter/mouseleave del container
+
+
+PROMPT 2:
+"Mejora del carrusel: el setInterval del auto-play se 'pelea' con los clicks
+del usuario. Si yo doy click en 'Siguiente', cambia bien, pero 2 segundos
+después el auto-play me mete otro slide y se ve mal. ¿Cómo lo arreglo?"
+
+RESPUESTA APLICADA:
+- Se creó la función reiniciarAutoplay() que hace clearInterval primero
+  y luego setInterval de nuevo
+- Se llama a esa función cada vez que el usuario interactúa con next, prev
+  o un dot, así el timer arranca de cero cada vez
+
+
+==============================
+2. VALIDACIONES DE FORMULARIOS
+==============================
+
+PROMPT 3:
+"Necesito validaciones para tres formularios HTML en JavaScript:
+1. Registro: nombre, email, teléfono, contraseña
+2. Login: email, contraseña
+3. Contacto: nombre, email, mensaje
+
+¿Qué buenas prácticas de seguridad debería aplicar? Mencióname todas las
+que apliquen para un proyecto académico de front-end."
+
+RESPUESTA APLICADA (recomendaciones de IA):
+1. SANITIZACIÓN XSS: nunca insertar input del usuario directo en innerHTML.
+   Escapar caracteres especiales: <, >, ", ', & → &lt; &gt; &quot; &#039; &amp;
+2. VALIDACIÓN DE EMAIL: usar regex /^[^\s@]+@[^\s@]+\.[^\s@]+$/ que verifica
+   formato básico sin ser demasiado restrictivo (RFC 5322 completo es enorme)
+3. CONTRASEÑAS: nunca guardar en texto plano. Usar al menos un hash.
+   Para producción: bcrypt/Argon2 en servidor. Para demo: hash FNV-1a simple
+4. trim() siempre en inputs de texto antes de validar (evita "  " como nombre)
+5. toLowerCase() en emails para no tener duplicados por mayúsculas/minúsculas
+6. Validar campos vacíos ANTES que el formato
+7. Mensajes de error específicos pero no revelar info sensible (ej: no decir
+   'el email no existe' en login, decir 'email o contraseña incorrectos')
+8. Limitar intentos en producción (rate limiting) — fuera de scope académico
+
+
+PROMPT 4:
+"Dame una función sanitizarHTML(str) en JavaScript que prevenga ataques XSS.
+Quiero que reemplace los caracteres peligrosos por sus entidades HTML."
+
+RESPUESTA APLICADA:
+function sanitizarHTML(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')   // primero & para no romper las demás
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+- Importante: reemplazar & PRIMERO, sino las otras entidades se rompen
+
+
+PROMPT 5:
+"¿Cómo valido una contraseña con buenas prácticas? Quiero un mínimo de
+seguridad sin ser molesto para el usuario."
+
+RESPUESTA APLICADA:
+- Mínimo 6 caracteres (8 sería ideal pero 6 es razonable para demo)
+- Al menos una letra (regex /[a-zA-Z]/)
+- Al menos un número (regex /\d/)
+- NO exigir caracteres especiales (UX vs seguridad: caracteres especiales
+  no añaden tanta seguridad y frustran al usuario, según NIST 2023)
+
+
+==============================
+3. ESTRUCTURA Y FUNCIONES
+==============================
+
+PROMPT 6:
+"¿Cómo debería organizar mi script.js para que el código sea modular y
+reutilizable? Tengo carrusel, 3 formularios, mapa, vuelos, cotizador y
+selector de monedas."
+
+RESPUESTA APLICADA:
+- Dividir por SECCIONES con comentarios /* === NOMBRE === */
+- Cada feature en una función inicializar<X>(): inicializarCarrusel(),
+  inicializarFormularios(), inicializarMapa(), etc.
+- Funciones puras de utilidad: validarEmail(), sanitizarHTML(), formatearPrecio()
+- $(document).ready(function() { ... }) como punto de entrada único
+- Variables globales SOLO para datos compartidos (usuariosRegistrados,
+  monedaActual), todo lo demás dentro de scope local
+
+
+PROMPT 7:
+"Necesito persistir los usuarios registrados aunque el usuario recargue la
+página. ¿Cómo usar localStorage de forma segura?"
+
+RESPUESTA APLICADA:
+- localStorage.setItem(key, JSON.stringify(array))
+- localStorage.getItem(key) y JSON.parse() con try/catch (puede haber
+  datos corruptos)
+- Clave prefijada con 'leotour_' para evitar colisiones con otras apps
+- NUNCA guardar contraseñas en plano, solo el hash
+
+
+==============================
+4. ACCESIBILIDAD Y SEMÁNTICA
+==============================
+
+PROMPT 8:
+"¿Qué elementos semánticos HTML5 debería usar y cómo asegurar que los
+labels estén bien vinculados a los inputs para accesibilidad?"
+
+RESPUESTA APLICADA:
+- <header> para barra superior con logo y navegación
+- <nav> para el menú dentro del header
+- <main> envolviendo TODO el contenido principal (entre header y footer)
+- <section> para cada bloque temático (hero, servicios, destinos, etc.)
+- <footer> al final
+- Cada <label for='id_del_input'> y cada input con id correspondiente
+- Esto permite que clickear el label enfoque el input (UX) y que lectores
+  de pantalla lean correctamente (accesibilidad)
+
+
+==============================
+5. MAPA INTERACTIVO (Leaflet)
+==============================
+
+PROMPT 9:
+"Estoy usando Leaflet para mostrar un mapa con marcadores de destinos
+turísticos cerca de Santiago de Chile. ¿Cuáles son las coordenadas
+correctas y cómo agrego varios marcadores?"
+
+RESPUESTA APLICADA:
+- Santiago centro: lat -33.4569, lng -70.6483 (no Sídney que es -33.8688, -151)
+- L.map('map').setView([lat, lng], zoom) con zoom 9 para ver toda la región
+- L.tileLayer de OpenStreetMap (gratis, sin API key)
+- Por cada destino: L.marker([lat, lng]).bindPopup('texto').addTo(map)
+
+
+================================================================================
+NOTA FINAL
+================================================================================
+Todas estas consultas fueron usadas como APOYO para tomar decisiones de diseño
+y seguridad. El código final fue revisado, adaptado al contexto del proyecto
+y comprendido antes de ser implementado. La IA actuó como asistente, no como
+generador automático de código sin revisión.
