@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>LEOTOUR - Transporte Aeropuerto SCL</title>
+
+	<!-- Favicon -->
+	<link rel="icon" type="image/x-icon" href="img/leotour.ico">
+	<link rel="shortcut icon" href="img/leotour.ico">
+
+	<link rel="stylesheet" href="css/styles.css">
+
+	<!-- Fuente -->
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+	<!-- Leaflet (mapa) -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+	<div class="navbar-container">
+		<a href="#" class="logo">
+			<img src="img/leotour-logo.png" alt="Logo LEOTOUR" width="42">
+			<span class="brand">LEOTOUR</span>
+		</a>
+
+		<nav class="nav-menu" id="navMenu">
+			<a href="#servicios" class="nav-link">Servicios</a>
+			<a href="#cotizar" class="nav-link">Cotizar</a>
+			<a href="#destinos" class="nav-link">Destinos</a>
+			<a href="#mapa" class="nav-link">Mapa</a>
+			<a href="#vuelos-section" class="nav-link">Vuelos</a>
+			<a href="#contacto" class="nav-link">Contacto</a>
+		</nav>
+
+		<div class="nav-actions">
+			<!-- Selector de Monedas -->
+			<div class="currency-selector">
+				<button class="currency-btn active" data-currency="USD">USD</button>
+				<button class="currency-btn" data-currency="CLP">CLP</button>
+				<button class="currency-btn" data-currency="BRL">BRL</button>
+			</div>
+
+			<button id="btnLogin" class="auth-btn login-btn">Iniciar Sesión</button>
+			<button id="btnRegistro" class="auth-btn registro-btn">Registrarse</button>
+		</div>
+
+		<button class="hamburger" id="hamburger" aria-label="Menú">
+			<span></span>
+			<span></span>
+			<span></span>
+		</button>
+	</div>
+</header>
+
+<!-- MAIN: contenido principal de la página -->
+<main>
+
+<!-- HERO -->
+<section class="hero">
+	<div class="hero-decoration"></div>
+	<div class="hero-content">
+		<span class="hero-badge"><i class="fas fa-shield-halved"></i> Transporte certificado SCL</span>
+		<h1 class="hero-title">Viaja con <span class="hero-title-accent">LEOTOUR</span></h1>
+		<p class="hero-subtitle">Transporte profesional desde y hacia el Aeropuerto de Santiago. Confiable, seguro y siempre a tiempo.</p>
+		<div class="hero-ctas">
+			<a href="#cotizar" class="cta-btn primary"><i class="fas fa-check-circle"></i> Reservar ahora</a>
+			<a href="#servicios" class="cta-btn secondary"><i class="fas fa-info-circle"></i> Conocer servicios</a>
+		</div>
+		<div class="hero-trust">
+			<div class="trust-item">
+				<i class="fas fa-star"></i>
+				<div>
+					<strong>4.9/5</strong>
+					<span>Más de 2.000 reseñas</span>
+				</div>
+			</div>
+			<div class="trust-item">
+				<i class="fas fa-clock"></i>
+				<div>
+					<strong>24/7</strong>
+					<span>Servicio disponible</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="hero-visual">
+		<img class="hero-img" src="img/leotour-van.png" alt="Van LEOTOUR">
+	</div>
+</section>
+
+<!-- STATS DE CONFIANZA -->
+<section class="stats">
+	<div class="stats-container">
+		<div class="stat-item">
+			<div class="stat-number">+8</div>
+			<div class="stat-label">Años de experiencia</div>
+		</div>
+		<div class="stat-divider"></div>
+		<div class="stat-item">
+			<div class="stat-number">+15K</div>
+			<div class="stat-label">Viajes realizados</div>
+		</div>
+		<div class="stat-divider"></div>
+		<div class="stat-item">
+			<div class="stat-number">100%</div>
+			<div class="stat-label">Vehículos asegurados</div>
+		</div>
+		<div class="stat-divider"></div>
+		<div class="stat-item">
+			<div class="stat-number">3</div>
+			<div class="stat-label">Monedas aceptadas</div>
+		</div>
+	</div>
+</section>
+
+<!-- CARRUSEL DE DESTINOS -->
+<section class="carousel-section">
+	<div class="section-heading">
+		<span class="section-eyebrow">Inspírate</span>
+		<h2>Destinos populares</h2>
+	</div>
+	<div class="carousel-container">
+		<div class="carousel-track">
+			<div class="carousel-item" style="background-image: url('img/cartagena.jpg');">
+				<div class="carousel-overlay">
+					<h3>Cartagena</h3>
+					<p>Puerto histórico con playas y vistas al mar</p>
+				</div>
+			</div>
+			<div class="carousel-item" style="background-image: url('img/valparaiso.jpg');">
+				<div class="carousel-overlay">
+					<h3>Valparaíso</h3>
+					<p>Ciudad vibrante con cerros coloridos y arte</p>
+				</div>
+			</div>
+			<div class="carousel-item" style="background-image: url('img/san-antonio.jpg');">
+				<div class="carousel-overlay">
+					<h3>San Antonio</h3>
+					<p>Puerto pesquero con playas tranquilas</p>
+				</div>
+			</div>
+			<div class="carousel-item" style="background-image: url('img/pomaire.jpg');">
+				<div class="carousel-overlay">
+					<h3>Pomaire</h3>
+					<p>Pueblo típico con cerámica artesanal</p>
+				</div>
+			</div>
+			<div class="carousel-item" style="background-image: url('img/cajon-maipo.jpg');">
+				<div class="carousel-overlay">
+					<h3>Cajón del Maipo</h3>
+					<p>Montañas, ríos y naturaleza pura</p>
+				</div>
+			</div>
+			<div class="carousel-item" style="background-image: url('img/pirque.jpg');">
+				<div class="carousel-overlay">
+					<h3>Pirque (Viñas)</h3>
+					<p>Degustación de vinos y paisajes agrícolas</p>
+				</div>
+			</div>
+		</div>
+
+		<button class="carousel-btn carousel-prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+		<button class="carousel-btn carousel-next" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
+
+		<div class="carousel-indicators">
+			<span class="carousel-dot active" data-slide="0"></span>
+			<span class="carousel-dot" data-slide="1"></span>
+			<span class="carousel-dot" data-slide="2"></span>
+			<span class="carousel-dot" data-slide="3"></span>
+			<span class="carousel-dot" data-slide="4"></span>
+			<span class="carousel-dot" data-slide="5"></span>
+		</div>
+	</div>
+</section>
+
+<!-- SERVICIOS -->
+<section class="servicios" id="servicios">
+	<div class="section-heading">
+		<span class="section-eyebrow">Nuestra flota</span>
+		<h2>Servicios a tu medida</h2>
+		<p class="section-subtitle">Elige el vehículo perfecto para tu traslado</p>
+	</div>
+
+	<div class="servicios-list">
+		<div class="servicio-card">
+			<div class="servicio-icon sedan-icon">
+				<svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg" class="car-svg">
+					<ellipse cx="60" cy="58" rx="50" ry="10" fill="#17999C" opacity="0.15"/>
+					<circle cx="35" cy="55" r="8" fill="#0f172a" stroke="#17999C" stroke-width="2"/>
+					<circle cx="35" cy="55" r="5" fill="#17999C" opacity="0.3"/>
+					<circle cx="85" cy="55" r="8" fill="#0f172a" stroke="#17999C" stroke-width="2"/>
+					<circle cx="85" cy="55" r="5" fill="#17999C" opacity="0.3"/>
+					<path d="M 30 40 Q 28 28 35 20 L 85 20 Q 92 28 90 40 Z" fill="#17999C" stroke="#17999C" stroke-width="2.5" stroke-linejoin="round"/>
+					<rect x="28" y="40" width="64" height="15" rx="3" fill="#17999C"/>
+					<rect x="40" y="22" width="16" height="12" rx="2" fill="rgba(255, 165, 0, 0.4)" stroke="#FFA500" stroke-width="1"/>
+					<rect x="64" y="22" width="16" height="12" rx="2" fill="rgba(255, 165, 0, 0.4)" stroke="#FFA500" stroke-width="1"/>
+					<circle cx="28" cy="32" r="3" fill="#fbbf24" opacity="0.8"/>
+				</svg>
+			</div>
+			<h3>Sedán Privado</h3>
+			<p class="servicio-desc">Comodidad para 1-3 pasajeros</p>
+			<ul class="servicio-features">
+				<li><i class="fas fa-check"></i> GPS Rastreado</li>
+				<li><i class="fas fa-check"></i> Conductor profesional</li>
+				<li><i class="fas fa-check"></i> WiFi gratis</li>
+			</ul>
+			<a href="#cotizar" class="servicio-link">Cotizar <i class="fas fa-arrow-right"></i></a>
+		</div>
+
+		<div class="servicio-card featured">
+			<span class="servicio-badge">Popular</span>
+			<div class="servicio-icon suv-icon">
+				<svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg" class="car-svg">
+					<ellipse cx="60" cy="58" rx="52" ry="11" fill="#FFA500" opacity="0.15"/>
+					<circle cx="32" cy="56" r="9" fill="#0f172a" stroke="#FFA500" stroke-width="2.5"/>
+					<circle cx="32" cy="56" r="6" fill="#FFA500" opacity="0.4"/>
+					<circle cx="88" cy="56" r="9" fill="#0f172a" stroke="#FFA500" stroke-width="2.5"/>
+					<circle cx="88" cy="56" r="6" fill="#FFA500" opacity="0.4"/>
+					<path d="M 25 42 Q 22 25 32 15 L 88 15 Q 98 25 95 42 Z" fill="#FFA500" stroke="#FFA500" stroke-width="2.5" stroke-linejoin="round"/>
+					<rect x="23" y="42" width="74" height="14" rx="3" fill="#FFA500"/>
+					<rect x="38" y="18" width="19" height="16" rx="2" fill="rgba(23, 153, 156, 0.4)" stroke="#17999C" stroke-width="1.5"/>
+					<rect x="63" y="18" width="19" height="16" rx="2" fill="rgba(23, 153, 156, 0.4)" stroke="#17999C" stroke-width="1.5"/>
+					<circle cx="23" cy="28" r="3.5" fill="#fbbf24" opacity="0.9"/>
+				</svg>
+			</div>
+			<h3>SUV Ejecutivo</h3>
+			<p class="servicio-desc">Experiencia premium</p>
+			<ul class="servicio-features">
+				<li><i class="fas fa-check"></i> Clima Premium</li>
+				<li><i class="fas fa-check"></i> Minibar</li>
+				<li><i class="fas fa-check"></i> Prensa/TV</li>
+			</ul>
+			<a href="#cotizar" class="servicio-link">Cotizar <i class="fas fa-arrow-right"></i></a>
+		</div>
+
+		<div class="servicio-card">
+			<div class="servicio-icon van-icon">
+				<svg viewBox="0 0 130 70" xmlns="http://www.w3.org/2000/svg" class="car-svg">
+					<ellipse cx="65" cy="58" rx="58" ry="11" fill="#17999C" opacity="0.15"/>
+					<circle cx="28" cy="56" r="9.5" fill="#0f172a" stroke="#17999C" stroke-width="2.5"/>
+					<circle cx="28" cy="56" r="6" fill="#17999C" opacity="0.4"/>
+					<circle cx="45" cy="56" r="9.5" fill="#0f172a" stroke="#17999C" stroke-width="2.5"/>
+					<circle cx="45" cy="56" r="6" fill="#17999C" opacity="0.4"/>
+					<circle cx="102" cy="56" r="9.5" fill="#0f172a" stroke="#17999C" stroke-width="2.5"/>
+					<circle cx="102" cy="56" r="6" fill="#17999C" opacity="0.4"/>
+					<path d="M 20 42 Q 18 24 28 12 L 102 12 Q 112 24 110 42 Z" fill="#17999C" stroke="#17999C" stroke-width="2.5" stroke-linejoin="round"/>
+					<rect x="18" y="42" width="94" height="14" rx="3" fill="#17999C"/>
+					<rect x="35" y="15" width="14" height="14" rx="1.5" fill="rgba(255, 165, 0, 0.35)" stroke="#FFA500" stroke-width="1"/>
+					<rect x="55" y="15" width="14" height="14" rx="1.5" fill="rgba(255, 165, 0, 0.35)" stroke="#FFA500" stroke-width="1"/>
+					<rect x="75" y="15" width="14" height="14" rx="1.5" fill="rgba(255, 165, 0, 0.35)" stroke="#FFA500" stroke-width="1"/>
+					<circle cx="18" cy="30" r="3" fill="#fbbf24" opacity="0.85"/>
+				</svg>
+			</div>
+			<h3>Van (6 personas)</h3>
+			<p class="servicio-desc">Ideal para grupos</p>
+			<ul class="servicio-features">
+				<li><i class="fas fa-check"></i> Espacioso y cómodo</li>
+				<li><i class="fas fa-check"></i> Maletero grande</li>
+				<li><i class="fas fa-check"></i> Entretenimiento</li>
+			</ul>
+			<a href="#cotizar" class="servicio-link">Cotizar <i class="fas fa-arrow-right"></i></a>
+		</div>
+	</div>
+</section>
+
+<!-- COTIZADOR -->
+<section class="cotizador" id="cotizar">
+	<div class="section-heading">
+		<span class="section-eyebrow">Reserva fácil</span>
+		<h2>Cotiza tu traslado</h2>
+		<p class="section-subtitle">Recibe tu cotización en segundos</p>
+	</div>
+
+	<form id="cotizadorForm" class="form-container">
+		<div class="form-group">
+			<label for="comuna"><i class="fas fa-map-marker-alt"></i> Comuna destino</label>
+			<select id="comuna" name="comuna">
+				<option value="">-- Seleccionar comuna --</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label for="servicio"><i class="fas fa-car-side"></i> Tipo de vehículo</label>
+			<select id="servicio" name="servicio">
+				<option value="privado">Sedán Privado</option>
+				<option value="ejecutivo">SUV Ejecutivo</option>
+				<option value="van">Van</option>
+			</select>
+		</div>
+
+		<div class="form-row">
+			<div class="form-group">
+				<label for="pasajeros"><i class="fas fa-users"></i> Pasajeros</label>
+				<input type="number" id="pasajeros" name="pasajeros" min="1" max="10" value="1">
+			</div>
+
+			<div class="form-group">
+				<label for="fecha"><i class="fas fa-calendar-alt"></i> Fecha y hora</label>
+				<input type="datetime-local" id="fecha" name="fecha">
+			</div>
+		</div>
+
+		<button type="submit" class="cta-btn primary"><i class="fas fa-calculator"></i> Cotizar traslado</button>
+	</form>
+
+	<div id="resultado" class="result"></div>
+</section>
+
+<!-- DESTINOS TURÍSTICOS -->
+<section class="destinos-section" id="destinos">
+	<div class="section-heading">
+		<span class="section-eyebrow">Tours</span>
+		<h2>Destinos turísticos Chile</h2>
+		<p class="section-subtitle">Descubre los mejores lugares de Chile con LEOTOUR</p>
+	</div>
+
+	<div class="destinos-grid">
+		<div class="destino-card">
+			<div class="destino-img" style="background-image: url('img/cartagena.jpg');">
+				<span class="destino-label">Cartagena</span>
+			</div>
+			<div class="destino-info">
+				<h3>Cartagena</h3>
+				<p>Puerto histórico con playas y vistas al mar</p>
+				<div class="destino-price">
+					<span class="price">$45.000 CLP</span>
+					<span class="distance"><i class="fas fa-route"></i> 45 km</span>
+				</div>
+				<button class="destino-btn" onclick="cotizarDestino('Cartagena', 45000)">Cotizar</button>
+			</div>
+		</div>
+
+		<div class="destino-card">
+			<div class="destino-img" style="background-image: url('img/valparaiso.jpg');">
+				<span class="destino-label">Valparaíso</span>
+			</div>
+			<div class="destino-info">
+				<h3>Valparaíso</h3>
+				<p>Ciudad vibrante con cerros coloridos y arte</p>
+				<div class="destino-price">
+					<span class="price">$35.000 CLP</span>
+					<span class="distance"><i class="fas fa-route"></i> 120 km</span>
+				</div>
+				<button class="destino-btn" onclick="cotizarDestino('Valparaíso', 35000)">Cotizar</button>
+			</div>
+		</div>
+
+		<div class="destino-card">
+			<div class="destino-img" style="background-image: url('img/san-antonio.jpg');">
+				<span class="destino-label">San Antonio</span>
+			</div>
+			<div class="destino-info">
+				<h3>San Antonio</h3>
+				<p>Puerto pesquero con playas tranquilas</p>
+				<div class="destino-price">
+					<span class="price">$55.000 CLP</span>
+					<span class="distance"><i class="fas fa-route"></i> 100 km</span>
+				</div>
+				<button class="destino-btn" onclick="cotizarDestino('San Antonio', 55000)">Cotizar</button>
+			</div>
+		</div>
+
+		<div class="destino-card">
+			<div class="destino-img" style="background-image: url('img/pomaire.jpg');">
+				<span class="destino-label">Pomaire</span>
+			</div>
+			<div class="destino-info">
+				<h3>Pomaire</h3>
+				<p>Pueblo típico con cerámica artesanal</p>
+				<div class="destino-price">
+					<span class="price">$65.000 CLP</span>
+					<span class="distance"><i class="fas fa-route"></i> 60 km</span>
+				</div>
+				<button class="destino-btn" onclick="cotizarDestino('Pomaire', 65000)">Cotizar</button>
+			</div>
+		</div>
+
+		<div class="destino-card">
+			<div class="destino-img" style="background-image: url('img/cajon-maipo.jpg');">
+				<span class="destino-label">Cajón del Maipo</span>
+			</div>
+			<div class="destino-info">
+				<h3>Cajón del Maipo</h3>
+				<p>Montañas, ríos y naturaleza pura</p>
+				<div class="destino-price">
+					<span class="price">$50.000 CLP</span>
+					<span class="distance"><i class="fas fa-route"></i> 50 km</span>
+				</div>
+				<button class="destino-btn" onclick="cotizarDestino('Cajón del Maipo', 50000)">Cotizar</button>
+			</div>
+		</div>
+
+		<div class="destino-card">
+			<div class="destino-img" style="background-image: url('img/pirque.jpg');">
+				<span class="destino-label">Pirque (Viñas)</span>
+			</div>
+			<div class="destino-info">
+				<h3>Pirque (Viñas)</h3>
+				<p>Degustación de vinos y paisajes agrícolas</p>
+				<div class="destino-price">
+					<span class="price">$40.000 CLP</span>
+					<span class="distance"><i class="fas fa-route"></i> 35 km</span>
+				</div>
+				<button class="destino-btn" onclick="cotizarDestino('Pirque', 40000)">Cotizar</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="destinoResultado" class="result" style="margin-top: 30px;"></div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testimonios">
+	<div class="section-heading">
+		<span class="section-eyebrow">Confianza</span>
+		<h2>Lo que dicen nuestros clientes</h2>
+	</div>
+
+	<div class="testimonios-grid">
+		<div class="testimonio-card">
+			<div class="testimonio-stars">
+				<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+			</div>
+			<p>"Servicio impecable. El conductor llegó puntual al aeropuerto y el viaje fue muy cómodo. 100% recomendado para turistas."</p>
+			<div class="testimonio-author">
+				<div class="testimonio-avatar" style="background: linear-gradient(135deg, #17999C, #0e7a7d);">MR</div>
+				<div>
+					<strong>María Rodríguez</strong>
+					<span>Brasil</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="testimonio-card">
+			<div class="testimonio-stars">
+				<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+			</div>
+			<p>"Reservé el SUV ejecutivo y superó mis expectativas. Vehículo nuevo, WiFi excelente y atención profesional. Volveré a usar LEOTOUR."</p>
+			<div class="testimonio-author">
+				<div class="testimonio-avatar" style="background: linear-gradient(135deg, #FFA500, #e07f00);">JP</div>
+				<div>
+					<strong>Juan Pérez</strong>
+					<span>Chile</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="testimonio-card">
+			<div class="testimonio-stars">
+				<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+			</div>
+			<p>"Viajamos en grupo de 6 personas y la van fue perfecta. Mucho espacio para equipaje y el chofer súper amable. Excelente relación precio-calidad."</p>
+			<div class="testimonio-author">
+				<div class="testimonio-avatar" style="background: linear-gradient(135deg, #17999C, #FFA500);">AS</div>
+				<div>
+					<strong>Ana Silva</strong>
+					<span>Argentina</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- MAPA -->
+<section class="mapa" id="mapa">
+	<div class="section-heading">
+		<span class="section-eyebrow">Cobertura</span>
+		<h2>Mapa de rutas</h2>
+		<p class="section-subtitle">Haz clic en el mapa para seleccionar destino</p>
+	</div>
+
+	<div id="map" class="map"></div>
+
+	<div class="map-footer">
+		<p id="summary" class="muted">Haz clic en el mapa para seleccionar destino</p>
+	</div>
+</section>
+
+<!-- VUELOS -->
+<section class="vuelos-panel" id="vuelos-section">
+	<div class="vuelos-header">
+		<h2><i class="fas fa-plane"></i> Vuelos en tiempo real — Aeropuerto SCL</h2>
+		<p class="vuelos-info">Información actualizada cada 30 segundos</p>
+	</div>
+
+	<div class="vuelos-container">
+		<div class="vuelos-display">
+			<div class="vuelos-header-row">
+				<div class="vuelos-col-hora">HORA</div>
+				<div class="vuelos-col-destino">DESTINO</div>
+				<div class="vuelos-col-info">INFORMACIÓN</div>
+				<div class="vuelos-col-estado">ESTADO</div>
+			</div>
+			<div id="vuelos" class="vuelos-board"></div>
+		</div>
+	</div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contacto" id="contacto">
+	<div class="section-heading">
+		<span class="section-eyebrow">Estamos para ti</span>
+		<h2>Contáctanos</h2>
+	</div>
+
+	<div class="contacto-wrapper">
+		<form id="contactForm" class="contact-form">
+			<div class="form-group">
+				<label for="nombre">Nombre completo</label>
+				<input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+			</div>
+			<div class="form-group">
+				<label for="correo">Correo electrónico</label>
+				<input type="email" id="correo" name="correo" placeholder="tu@email.com" required>
+			</div>
+			<div class="form-group">
+				<label for="mensaje">Mensaje</label>
+				<textarea id="mensaje" name="mensaje" placeholder="Escribe tu mensaje aquí..." required></textarea>
+			</div>
+			<button type="submit" class="cta-btn primary">Enviar mensaje</button>
+			<div id="contactResult" style="margin-top: 10px; display: none;"></div>
+		</form>
+
+		<div class="contact-info">
+			<h3>Información de contacto</h3>
+			<p><i class="fas fa-envelope"></i> contacto@leotour.cl</p>
+			<p><i class="fas fa-phone"></i> +56 9 1234 5678</p>
+			<p><i class="fas fa-location-dot"></i> Aeropuerto SCL, Santiago</p>
+			<p><i class="fas fa-clock"></i> 24/7 todos los días</p>
+		</div>
+	</div>
+</section>
+
+</main>
+<!-- /MAIN -->
+
+<!-- ========================== MODALES DE AUTENTICACIÓN ========================== -->
+
+<!-- MODAL LOGIN -->
+<div id="modalLogin" class="modal-overlay">
+	<div class="modal-container">
+		<button class="modal-close" id="closeLogin">&times;</button>
+		<h2 class="modal-title">Iniciar Sesión</h2>
+
+		<form id="formularioLogin" class="modal-form">
+			<div class="form-group">
+				<label for="login_email">Email:</label>
+				<input type="email" id="login_email" name="email" placeholder="tu@email.com" required>
+				<span id="error_login_email" class="error-message"></span>
+			</div>
+
+			<div class="form-group">
+				<label for="login_contraseña">Contraseña:</label>
+				<input type="password" id="login_contraseña" name="contraseña" placeholder="Contraseña" required>
+				<span id="error_login_contraseña" class="error-message"></span>
+			</div>
+
+			<div class="form-group checkbox">
+				<input type="checkbox" id="recordarme" name="recordarme">
+				<label for="recordarme">Recuérdame</label>
+			</div>
+
+			<button type="submit" class="cta-btn primary modal-submit">Iniciar Sesión</button>
+			<div id="mensaje_login" class="message"></div>
+		</form>
+
+		<div class="modal-footer">
+			<p>¿No tienes cuenta? <button class="link-btn" id="irRegistro">Regístrate aquí</button></p>
+		</div>
+	</div>
+</div>
+
+<!-- MODAL REGISTRO -->
+<div id="modalRegistro" class="modal-overlay">
+	<div class="modal-container">
+		<button class="modal-close" id="closeRegistro">&times;</button>
+		<h2 class="modal-title">Crear Cuenta</h2>
+
+		<form id="formularioInscripcion" class="modal-form">
+			<div class="form-group">
+				<label for="inscripcion_nombre">Nombre completo:</label>
+				<input type="text" id="inscripcion_nombre" name="nombre" placeholder="Tu nombre" required>
+				<span id="error_inscripcion_nombre" class="error-message"></span>
+			</div>
+
+			<div class="form-group">
+				<label for="inscripcion_email">Email:</label>
+				<input type="email" id="inscripcion_email" name="email" placeholder="tu@email.com" required>
+				<span id="error_inscripcion_email" class="error-message"></span>
+			</div>
+
+			<div class="form-group">
+				<label for="inscripcion_telefono">Teléfono:</label>
+				<input type="tel" id="inscripcion_telefono" name="telefono" placeholder="+56 9 1234 5678" required>
+				<span id="error_inscripcion_telefono" class="error-message"></span>
+			</div>
+
+			<div class="form-group">
+				<label for="inscripcion_contraseña">Contraseña:</label>
+				<input type="password" id="inscripcion_contraseña" name="contraseña" placeholder="Mínimo 6 caracteres" required>
+				<span id="error_inscripcion_contraseña" class="error-message"></span>
+			</div>
+
+			<button type="submit" class="cta-btn primary modal-submit">Crear Cuenta</button>
+			<div id="mensaje_inscripcion" class="message"></div>
+		</form>
+
+		<div class="modal-footer">
+			<p>¿Ya tienes cuenta? <button class="link-btn" id="irLogin">Inicia sesión aquí</button></p>
+		</div>
+	</div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+	<div class="footer-container">
+		<div class="footer-brand">
+			<img src="img/leotour-logo.png" alt="LEOTOUR" width="50">
+			<div>
+				<strong>LEOTOUR</strong>
+				<span>Transporte Premium SCL</span>
+			</div>
+		</div>
+		<div class="footer-links">
+			<a href="#servicios">Servicios</a>
+			<a href="#destinos">Destinos</a>
+			<a href="#cotizar">Cotizar</a>
+			<a href="#contacto">Contacto</a>
+		</div>
+		<p class="footer-copy">© 2026 LEOTOUR — Todos los derechos reservados</p>
+	</div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="js/script.js"></script>
+
+<!-- Hamburguesa toggle + Carrusel de respaldo (vanilla JS, sin jQuery) -->
+<script>
+	// === HAMBURGUESA ===
+	document.getElementById('hamburger')?.addEventListener('click', function() {
+		this.classList.toggle('active');
+		document.getElementById('navMenu')?.classList.toggle('active');
+	});
+	document.querySelectorAll('.nav-menu .nav-link').forEach(link => {
+		link.addEventListener('click', () => {
+			document.getElementById('hamburger')?.classList.remove('active');
+			document.getElementById('navMenu')?.classList.remove('active');
+		});
+	});
+
+	// === CARRUSEL (vanilla JS, no depende de jQuery) ===
+	(function() {
+		const track = document.querySelector('.carousel-track');
+		const items = document.querySelectorAll('.carousel-item');
+		const dots  = document.querySelectorAll('.carousel-dot');
+		const btnNext = document.querySelector('.carousel-next');
+		const btnPrev = document.querySelector('.carousel-prev');
+
+		if (!track || items.length === 0) {
+			console.warn('Carrusel: elementos no encontrados');
+			return;
+		}
+
+		let current = 0;
+		const total = items.length;
+		let timer = null;
+
+		function go(i) {
+			current = ((i % total) + total) % total;
+			track.style.transform = 'translateX(' + (-current * 100) + '%)';
+			dots.forEach((d, idx) => d.classList.toggle('active', idx === current));
+		}
+
+		function next() { go(current + 1); }
+		function prev() { go(current - 1); }
+
+		function startAuto() {
+			if (timer) clearInterval(timer);
+			timer = setInterval(next, 5000); // 5 segundos
+		}
+
+		// Eventos
+		btnNext?.addEventListener('click', () => { next(); startAuto(); });
+		btnPrev?.addEventListener('click', () => { prev(); startAuto(); });
+		dots.forEach((dot, idx) => {
+			dot.addEventListener('click', () => { go(idx); startAuto(); });
+		});
+
+		// Pausar al pasar mouse
+		const container = document.querySelector('.carousel-container');
+		container?.addEventListener('mouseenter', () => timer && clearInterval(timer));
+		container?.addEventListener('mouseleave', startAuto);
+
+		// Posición inicial + arrancar
+		go(0);
+		startAuto();
+		console.log('✓ Carrusel listo: ' + total + ' slides, cambio cada 5s');
+	})();
+</script>
+
+<!-- WhatsApp Flotante -->
+<a href="https://wa.me/56912345678?text=Hola%20LEOTOUR,%20me%20gustaría%20conocer%20más%20sobre%20tus%20servicios" class="whatsapp-btn" target="_blank" title="Contactar por WhatsApp">
+	<i class="fab fa-whatsapp"></i>
+</a>
+
+</body>
+</html>
