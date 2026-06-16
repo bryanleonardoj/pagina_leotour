@@ -1,3 +1,22 @@
+/**
+ * Componente Raíz: App
+ * Rol: Componente principal que orquesta todos los demás componentes.
+ *      Gestiona el estado global de la aplicación y distribuye datos/handlers
+ *      a los componentes hijos mediante props.
+ *
+ * Componentes hijos importados:
+ *   - CarruselImagenes  →  Carrusel con useState (slide) y handleCambioImagen
+ *   - IniciarSesion     →  Modal con formulario de login controlado
+ *   - CrearCuenta       →  Modal con formulario de inscripción controlado
+ *   - Contacto          →  Formulario de contacto autónomo con validación XSS
+ *
+ * Estado global (useState):
+ *   - usuariosRegistrados[]: arreglo de objetos usuario (inscritos)
+ *   - usuarioActual: objeto del usuario logueado o null
+ *   - monedaActual: 'USD' | 'CLP' | 'BRL'
+ *   - cotizador: objeto con datos del formulario de cotización
+ *   - loginOpen / registroOpen: booleanos de visibilidad de modales
+ */
 import { useEffect, useMemo, useState } from "react";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import CarruselImagenes from "./component/CarruselImagenes";

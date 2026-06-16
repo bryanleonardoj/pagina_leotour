@@ -1,3 +1,16 @@
+/**
+ * Componente: Contacto
+ * Rol: Formulario de contacto controlado (Nombre, Email, Mensaje).
+ * Props: ninguna — es autónomo, gestiona su propio estado.
+ * Estado propio:
+ *   - datos (useState): objeto { nombre, correo, mensaje }
+ *   - resultado (useState): mensaje de éxito o error para mostrar al usuario
+ *   - esError (useState): booleano que diferencia el tipo de alerta
+ * Seguridad: sanitizarTexto() escapa caracteres HTML antes de procesar el input.
+ * Funciones clave:
+ *   - handleCambioDato(e): actualiza el estado por nombre de campo
+ *   - handleValidacion(e): valida y sanitiza antes de "enviar"
+ */
 import { useState } from "react";
 
 const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

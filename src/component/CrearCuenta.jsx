@@ -1,3 +1,18 @@
+/**
+ * Componente: CrearCuenta
+ * Rol: Modal con formulario de inscripción controlado. Agrega el nuevo usuario
+ *      al arreglo de inscritos administrado con useState en el padre (App).
+ * Props:
+ *   - isOpen (bool): controla visibilidad del modal
+ *   - onCerrar (fn): cierra el modal desde el padre
+ *   - onRegistro (fn): handler del padre que recibe el objeto usuario sanitizado
+ *                      y devuelve { exito: bool, mensaje: string }
+ *   - onIrALogin (fn): abre el modal de IniciarSesion desde el padre
+ * Estado propio:
+ *   - datos (useState): objeto { nombre, email, telefono, contrasena }
+ *   - error / exito (useState): mensajes de validación
+ * Seguridad: sanitizarTexto() aplicada a nombre y email antes de pasar al padre.
+ */
 import { useState } from "react";
 
 const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

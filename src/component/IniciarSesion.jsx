@@ -1,3 +1,18 @@
+/**
+ * Componente: IniciarSesion
+ * Rol: Modal con formulario de login controlado. Valida credenciales contra
+ *      el arreglo de inscritos que gestiona el componente padre (App).
+ * Props:
+ *   - isOpen (bool): controla visibilidad del modal
+ *   - onCerrar (fn): cierra el modal desde el padre
+ *   - onLogin (fn): handler del padre que recibe (email, contrasena, recordarme)
+ *                   y devuelve { exito: bool, mensaje: string }
+ *   - onIrARegistro (fn): abre el modal de CrearCuenta desde el padre
+ * Estado propio:
+ *   - datos (useState): objeto { email, contrasena, recordarme }
+ *   - error / exito (useState): mensajes de validación
+ * Seguridad: sanitizarTexto() aplicada al email antes de pasarlo al padre.
+ */
 import { useState } from "react";
 
 const validarEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

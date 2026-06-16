@@ -1,3 +1,14 @@
+/**
+ * Componente: CarruselImagenes
+ * Rol: Muestra un carrusel de imágenes con navegación manual y auto-avance.
+ * Props:
+ *   - imagenes: arreglo de objetos { nombre, descripcion, imagen }
+ * Estado propio:
+ *   - slide (useState): índice del slide activo
+ *   - timerRef (useRef): referencia al intervalo de auto-avance
+ * Hooks usados: useState, useEffect, useRef
+ * Sin manipulación directa del DOM: los cambios se hacen vía setSlide()
+ */
 import { useState, useEffect, useRef } from "react";
 
 function CarruselImagenes({ imagenes }) {
