@@ -1,0 +1,123 @@
+================================================================
+ ARCHIVO DE CONSULTAS A HERRAMIENTAS DE INTELIGENCIA ARTIFICIAL
+ Proyecto: LEOTOUR — Aplicación React con Vite
+ Fecha: Junio 2026
+================================================================
+
+----------------------------------------------------------------
+SECCIÓN A — ESTRUCTURACIÓN E IDENTIFICACIÓN DE COMPONENTES EN REACT
+----------------------------------------------------------------
+
+PROMPT 1:
+"¿Cuál es la mejor práctica para implementar un carrusel de imágenes
+en React usando solo hooks funcionales (useState, useEffect, useRef)?
+Necesito que el componente maneje su propio estado de slide, tenga
+botones Anterior y Siguiente, y un temporizador de auto-avance que
+se reinicie al hacer clic manual."
+
+RESPUESTA RESUMIDA DE LA IA:
+- Usar useState para el índice del slide activo (const [slide, setSlide]).
+- Usar useRef para guardar el ID del intervalo y no recrearlo en cada render.
+- useEffect para iniciar el intervalo y retornar una función de limpieza
+  (clearInterval) que evite memory leaks al desmontar el componente.
+- El manejador handleCambioImagen recibe el nuevo índice como argumento
+  y llama a setSlide para actualizar el estado sin tocar el DOM directamente.
+- Los botones Anterior/Siguiente calculan el nuevo índice con módulo
+  aritmético: (slide - 1 + total) % total y (slide + 1) % total.
+
+PROMPT 2:
+"¿Cómo debo organizar los componentes de un formulario React para que
+sean reutilizables y comunicados mediante props? Tengo tres formularios:
+Inscripción, Login y Contacto. ¿Cómo paso los manejadores de eventos
+desde el componente padre (App) a los hijos?"
+
+RESPUESTA RESUMIDA DE LA IA:
+- Cada formulario debe ser un componente funcional separado en su propio archivo.
+- El componente hijo recibe manejadores como props (onLogin, onRegistro, etc.).
+- El componente hijo gestiona el estado interno del formulario con useState
+  (campos, errores, mensajes de éxito).
+- Al hacer submit, el hijo llama a la prop manejadora con los datos
+  sanitizados; el padre realiza la lógica de negocio (verificar usuarios,
+  actualizar arreglos de estado) y devuelve un objeto { exito, mensaje }.
+- Las props abiertas deben tener nombres descriptivos: onCerrar, onIrARegistro,
+  isOpen, para que el componente sea autodocumentado.
+
+PROMPT 3:
+"¿Qué estructura semántica de HTML debo usar dentro del JSX de React
+para una página de servicios de transporte? Quiero cumplir con
+accesibilidad y SEO."
+
+RESPUESTA RESUMIDA DE LA IA:
+- Usar <header> para la barra de navegación principal con el logo.
+- Usar <nav> dentro del header para los enlaces de navegación.
+- Envolver el contenido principal con <main>.
+- Cada bloque temático (servicios, cotizador, destinos, contacto) debe ser
+  una <section> con un id descriptivo para la navegación por anclas.
+- Usar <footer> para la información de copyright y enlaces secundarios.
+- Los botones de acción del carrusel deben tener aria-label para
+  accesibilidad de lectores de pantalla.
+
+----------------------------------------------------------------
+SECCIÓN B — PRÁCTICAS DE SEGURIDAD EN VALIDACIONES DE FORMULARIOS
+----------------------------------------------------------------
+
+PROMPT 4:
+"¿Cuáles son las mejores prácticas de seguridad para los formularios
+en React? Específicamente: ¿cómo prevenir inyección XSS en los inputs,
+cómo validar el formato de email con expresión regular, y qué debo
+sanitizar antes de mostrar datos ingresados por el usuario?"
+
+RESPUESTA RESUMIDA DE LA IA:
+- React ya escapa automáticamente los valores en JSX, por lo que el uso
+  de { variable } en el render es seguro por defecto. NUNCA usar
+  dangerouslySetInnerHTML con datos del usuario.
+- Agregar una función de sanitización explícita que elimine los caracteres
+  HTML especiales (<, >, &, ", ', `) antes de procesar o almacenar
+  datos del usuario, especialmente si se enviarán a un servidor:
+    const sanitizarTexto = (texto) =>
+      String(texto).replace(/[<>&"'`]/g, (c) => ({ "<":"&lt;", ">":"&gt;", ... }[c]));
+- Validar email con expresión regular estricta:
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+- Nunca confiar solo en la validación del cliente; replicar en el servidor.
+- Limpiar los campos del formulario tras un envío exitoso (resetear
+  el estado a valores vacíos) para evitar reenvíos accidentales.
+- Usar type="email", type="password" y type="tel" en los inputs para
+  aprovechar la validación nativa del navegador como primera capa.
+
+PROMPT 5:
+"¿Cómo implemento el atributo htmlFor en React para vincular <label>
+con su respectivo <input>? ¿Por qué es importante para accesibilidad?"
+
+RESPUESTA RESUMIDA DE LA IA:
+- En JSX, el equivalente de for en HTML es htmlFor (camelCase).
+- El valor de htmlFor debe coincidir exactamente con el atributo id del input.
+  Ejemplo:
+    <label htmlFor="login-email">Email:</label>
+    <input id="login-email" type="email" ... />
+- Esto permite que al hacer clic en el label, el foco se mueva al input,
+  mejorando la accesibilidad para usuarios de lectores de pantalla y
+  cumpliendo el estándar WCAG 2.1.
+- Para formularios con varios campos del mismo tipo en la misma página
+  (ej: email en Login Y en Contacto), usar prefijos únicos en los ids:
+  "login-email", "contacto-correo", "registro-email".
+
+PROMPT 6:
+"¿Cómo debo manejar los componentes controlados (controlled components)
+en React para los formularios? ¿Cuál es la diferencia con un componente
+no controlado?"
+
+RESPUESTA RESUMIDA DE LA IA:
+- Un componente CONTROLADO tiene su valor enlazado al estado de React:
+    <input value={datos.email} onChange={(e) => setDatos({...datos, email: e.target.value})} />
+  El estado React es la única fuente de verdad.
+- Un componente NO CONTROLADO usa ref o accede al DOM directamente
+  (e.target.value en el submit), lo que hace la validación más difícil.
+- Los formularios controlados son la práctica recomendada en React porque:
+  a) Permiten validar en tiempo real mientras el usuario escribe.
+  b) Permiten resetear el formulario limpiando el estado.
+  c) Facilitan el pre-llenado de campos desde datos externos.
+  d) Toda la lógica vive en JavaScript, no en el DOM.
+
+================================================================
+ FIN DEL ARCHIVO DE CONSULTAS
+================================================================
