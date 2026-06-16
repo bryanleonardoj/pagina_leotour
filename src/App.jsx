@@ -148,7 +148,7 @@ function App() {
             </div>
             {usuarioActual ? (
               <div className="user-profile">
-                <div className="user-avatar">{usuarioActual.nombre.charAt(0).toUpperCase()}</div>
+                <div className="user-avatar"><i className="fas fa-user"></i></div>
                 <span className="user-name">{usuarioActual.nombre.split(" ")[0]}</span>
                 <button
                   className="auth-btn login-btn"

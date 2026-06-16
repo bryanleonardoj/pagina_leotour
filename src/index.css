@@ -282,15 +282,14 @@ button {
 	width: 36px;
 	height: 36px;
 	border-radius: 50%;
-	background: var(--gradient-brand);
+	background: #2563eb;
 	color: white;
-	font-weight: 800;
 	font-size: 1rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	box-shadow: var(--shadow-glow-primary);
+	box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
 }
 
 .user-name {

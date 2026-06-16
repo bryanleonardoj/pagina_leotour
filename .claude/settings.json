@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(git add index.html package.json package-lock.json vite.config.js .gitignore ia_consultas.txt src/ public/)",
-      "PowerShell(git remote add origin https://github.com/bryanleonardoj/pagina_leotour.git)",
-      "PowerShell(git add src/index.css)"
-    ]
-  }
-}
