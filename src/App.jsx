@@ -9,59 +9,102 @@
  *   - IniciarSesion     →  Modal con formulario de login controlado
  *   - CrearCuenta       →  Modal con formulario de inscripción controlado
  *   - Contacto          →  Formulario de contacto autónomo con validación XSS
+ *   - PanelAdmin        →  Panel CRUD completo para el administrador
+ *
+ * APIs integradas:
+ *   - Frankfurter API   →  Tasas de cambio reales USD→CLP / USD→BRL (sin key)
+ *   - Open-Meteo API    →  Clima en tiempo real por destino (sin key, en TabDashboard)
  *
  * Estado global (useState):
  *   - usuariosRegistrados[]: arreglo de objetos usuario (inscritos)
  *   - usuarioActual: objeto del usuario logueado o null
  *   - monedaActual: 'USD' | 'CLP' | 'BRL'
+ *   - tasasCambio: tasas reales obtenidas de Frankfurter (fallback: valores fijos)
+ *   - destinos[]: gestionados vía CRUD admin, persistidos en localStorage
+ *   - servicios[]: gestionados vía CRUD admin, persistidos en localStorage
+ *   - reservas[]: cotizaciones enviadas, persistidas en localStorage
  *   - cotizador: objeto con datos del formulario de cotización
  *   - loginOpen / registroOpen: booleanos de visibilidad de modales
+ *   - panelAdminOpen: boolean de visibilidad del panel admin
  */
 import { useEffect, useMemo, useState } from "react";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import CarruselImagenes from "./component/CarruselImagenes";
-import IniciarSesion from "./component/IniciarSesion";
-import CrearCuenta from "./component/CrearCuenta";
-import Contacto from "./component/Contacto";
+import IniciarSesion    from "./component/IniciarSesion";
+import CrearCuenta      from "./component/CrearCuenta";
+import Contacto         from "./component/Contacto";
+import PanelAdmin       from "./component/admin/PanelAdmin";
 
-const tasasCambio = { USD: 1, CLP: 850, BRL: 5.1 };
+// Credenciales del administrador (en producción irían en el backend)
+const ADMIN_EMAIL = "admin@leotour.cl";
+const ADMIN_PASS  = "admin2026";
 
-const servicios = [
-  { id: "privado", nombre: "Sedán Privado", desc: "Comodidad para 1-3 pasajeros", clase: "sedan-icon", icon: "fa-car" },
-  { id: "ejecutivo", nombre: "SUV Ejecutivo", desc: "Experiencia premium", clase: "suv-icon", icon: "fa-car-side" },
-  { id: "van", nombre: "Van (6 personas)", desc: "Ideal para grupos", clase: "van-icon", icon: "fa-shuttle-van" }
+const TASAS_DEFAULT = { USD: 1, CLP: 850, BRL: 5.1 };
+
+const serviciosDefault = [
+  { id: "privado",   nombre: "Sedán Privado",    desc: "Comodidad para 1-3 pasajeros", clase: "sedan-icon", icon: "fa-car",          precioBase: 15000 },
+  { id: "ejecutivo", nombre: "SUV Ejecutivo",     desc: "Experiencia premium",          clase: "suv-icon",   icon: "fa-car-side",     precioBase: 25000 },
+  { id: "van",       nombre: "Van (6 personas)",  desc: "Ideal para grupos",            clase: "van-icon",   icon: "fa-shuttle-van",  precioBase: 35000 }
 ];
 
-const destinos = [
-  { nombre: "Cartagena", descripcion: "Puerto histórico con playas y vistas al mar", imagen: "/img/cartagena.jpg", precio: 45000, distancia: 45 },
-  { nombre: "Valparaíso", descripcion: "Ciudad vibrante con cerros coloridos y arte", imagen: "/img/valparaiso.jpg", precio: 35000, distancia: 120 },
-  { nombre: "San Antonio", descripcion: "Puerto pesquero con playas tranquilas", imagen: "/img/san-antonio.jpg", precio: 55000, distancia: 100 },
-  { nombre: "Pomaire", descripcion: "Pueblo típico con cerámica artesanal", imagen: "/img/pomaire.jpg", precio: 65000, distancia: 60 },
-  { nombre: "Cajón del Maipo", descripcion: "Montañas, ríos y naturaleza pura", imagen: "/img/cajon-maipo.jpg", precio: 50000, distancia: 50 },
-  { nombre: "Pirque (Viñas)", descripcion: "Degustación de vinos y paisajes agrícolas", imagen: "/img/pirque.jpg", precio: 40000, distancia: 35 }
+const destinosDefault = [
+  { id: 1, nombre: "Cartagena",       descripcion: "Puerto histórico con playas y vistas al mar",     imagen: "/img/cartagena.jpg",   precio: 45000, distancia: 45,  lat: -33.5686, lng: -71.5545 },
+  { id: 2, nombre: "Valparaíso",      descripcion: "Ciudad vibrante con cerros coloridos y arte",     imagen: "/img/valparaiso.jpg",  precio: 35000, distancia: 120, lat: -33.0472, lng: -71.6127 },
+  { id: 3, nombre: "San Antonio",     descripcion: "Puerto pesquero con playas tranquilas",           imagen: "/img/san-antonio.jpg", precio: 55000, distancia: 100, lat: -33.5903, lng: -71.6218 },
+  { id: 4, nombre: "Pomaire",         descripcion: "Pueblo típico con cerámica artesanal",            imagen: "/img/pomaire.jpg",     precio: 65000, distancia: 60,  lat: -33.6297, lng: -71.2091 },
+  { id: 5, nombre: "Cajón del Maipo", descripcion: "Montañas, ríos y naturaleza pura",               imagen: "/img/cajon-maipo.jpg", precio: 50000, distancia: 50,  lat: -33.8236, lng: -70.2831 },
+  { id: 6, nombre: "Pirque (Viñas)",  descripcion: "Degustación de vinos y paisajes agrícolas",      imagen: "/img/pirque.jpg",      precio: 40000, distancia: 35,  lat: -33.6419, lng: -70.6261 }
 ];
 
 const vuelosEjemplo = [
-  { hora: "08:15", destino: "Miami", origen: "NCY", estado: "En tiempo", gate: "A-12" },
-  { hora: "10:30", destino: "New York", origen: "LAX", estado: "Retrasado", gate: "B-08" },
-  { hora: "12:45", destino: "Buenos Aires", origen: "EZE", estado: "En tiempo", gate: "A-05" },
-  { hora: "14:00", destino: "México", origen: "MEX", estado: "En tiempo", gate: "C-03" },
-  { hora: "15:30", destino: "São Paulo", origen: "GIG", estado: "Abordando", gate: "B-15" },
-  { hora: "17:00", destino: "Lima", origen: "LIM", estado: "En tiempo", gate: "A-18" }
+  { hora: "08:15", destino: "Miami",        origen: "NCY", estado: "En tiempo",  gate: "A-12" },
+  { hora: "10:30", destino: "New York",     origen: "LAX", estado: "Retrasado",  gate: "B-08" },
+  { hora: "12:45", destino: "Buenos Aires", origen: "EZE", estado: "En tiempo",  gate: "A-05" },
+  { hora: "14:00", destino: "México",       origen: "MEX", estado: "En tiempo",  gate: "C-03" },
+  { hora: "15:30", destino: "São Paulo",    origen: "GIG", estado: "Abordando",  gate: "B-15" },
+  { hora: "17:00", destino: "Lima",         origen: "LIM", estado: "En tiempo",  gate: "A-18" }
 ];
 
 const comunas = ["La Reina", "Providencia", "Santiago", "Ñuñoa", "Macul", "Maipú", "Las Condes", "Vitacura"];
 
+function leerLS(clave, fallback) {
+  try { return JSON.parse(localStorage.getItem(clave)) ?? fallback; } catch { return fallback; }
+}
+
 function App() {
-  const [monedaActual, setMonedaActual] = useState(localStorage.getItem("monedaSeleccionada") || "USD");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [registroOpen, setRegistroOpen] = useState(false);
-  const [usuariosRegistrados, setUsuariosRegistrados] = useState([]);
-  const [usuarioActual, setUsuarioActual] = useState(null);
-  const [cotizador, setCotizador] = useState({ comuna: "", servicio: "privado", pasajeros: 1, fecha: "" });
-  const [cotizacion, setCotizacion] = useState("");
-  const [destinoResultado, setDestinoResultado] = useState("");
+  const [tasasCambio,          setTasasCambio]         = useState(TASAS_DEFAULT);
+  const [monedaActual,         setMonedaActual]         = useState(localStorage.getItem("monedaSeleccionada") || "USD");
+  const [menuOpen,             setMenuOpen]             = useState(false);
+  const [loginOpen,            setLoginOpen]            = useState(false);
+  const [registroOpen,         setRegistroOpen]         = useState(false);
+  const [panelAdminOpen,       setPanelAdminOpen]       = useState(false);
+  const [panelTab,             setPanelTab]             = useState("dashboard");
+  const [usuariosRegistrados,  setUsuariosRegistrados]  = useState(() => leerLS("leotour_usuarios", []));
+  const [usuarioActual,        setUsuarioActual]        = useState(null);
+  const [cotizador,            setCotizador]            = useState({ comuna: "", servicio: "privado", pasajeros: 1, fecha: "" });
+  const [cotizacion,           setCotizacion]           = useState("");
+  const [destinoResultado,     setDestinoResultado]     = useState("");
+
+  // Datos gestionados por el CRUD del admin, persistidos en localStorage
+  const [destinos,  setDestinos]  = useState(() => leerLS("leotour_destinos",  destinosDefault));
+  const [servicios, setServicios] = useState(() => leerLS("leotour_servicios", serviciosDefault));
+  const [reservas,  setReservas]  = useState(() => leerLS("leotour_reservas",  []));
+
+  // Tasas de cambio reales desde Frankfurter API (Banco Central Europeo, sin key)
+  useEffect(() => {
+    fetch("https://api.frankfurter.app/latest?from=USD&to=CLP,BRL")
+      .then(r => r.json())
+      .then(data => {
+        if (data.rates?.CLP && data.rates?.BRL) {
+          setTasasCambio({
+            USD: 1,
+            CLP: Math.round(data.rates.CLP),
+            BRL: Number(data.rates.BRL.toFixed(2))
+          });
+        }
+      })
+      .catch(() => {}); // silently falls back to TASAS_DEFAULT
+  }, []);
 
   const convertirMoneda = (precioCLP) => {
     const precioUSD = precioCLP / tasasCambio.CLP;
@@ -86,11 +129,44 @@ function App() {
       attribution: "&copy; OpenStreetMap contributors",
       maxZoom: 19
     }).addTo(map);
-    L.marker([-33.5686, -71.5545]).bindPopup("Cartagena - 45 km").addTo(map);
-    L.marker([-33.0472, -71.6127]).bindPopup("Valparaíso - 120 km").addTo(map);
-    L.marker([-33.5903, -71.6218]).bindPopup("San Antonio - 100 km").addTo(map);
+    destinos.filter(d => d.lat && d.lng).forEach(d => {
+      L.marker([d.lat, d.lng]).bindPopup(`${d.nombre} — ${d.distancia} km`).addTo(map);
+    });
     return () => map.remove();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── CRUD helpers ────────────────────────────────────────────────────────────
+  const salvarDestinos = (lista) => {
+    setDestinos(lista);
+    localStorage.setItem("leotour_destinos", JSON.stringify(lista));
+  };
+  const agregarDestino  = (d) => salvarDestinos([...destinos, { ...d, id: Date.now() }]);
+  const editarDestino   = (id, d) => salvarDestinos(destinos.map(x => x.id === id ? { ...x, ...d } : x));
+  const eliminarDestino = (id) => salvarDestinos(destinos.filter(x => x.id !== id));
+
+  const salvarServicios = (lista) => {
+    setServicios(lista);
+    localStorage.setItem("leotour_servicios", JSON.stringify(lista));
+  };
+  const agregarServicio  = (s) => salvarServicios([...servicios, s]);
+  const editarServicio   = (id, s) => salvarServicios(servicios.map(x => x.id === id ? { ...x, ...s } : x));
+  const eliminarServicio = (id) => salvarServicios(servicios.filter(x => x.id !== id));
+
+  const salvarReservas = (lista) => {
+    setReservas(lista);
+    localStorage.setItem("leotour_reservas", JSON.stringify(lista));
+  };
+  const actualizarReserva = (id, r) => salvarReservas(reservas.map(x => x.id === id ? { ...x, ...r } : x));
+  const eliminarReserva   = (id) => salvarReservas(reservas.filter(x => x.id !== id));
+
+  const salvarUsuarios = (lista) => {
+    setUsuariosRegistrados(lista);
+    localStorage.setItem("leotour_usuarios", JSON.stringify(lista));
+  };
+  const agregarUsuario  = (u) => salvarUsuarios([...usuariosRegistrados, { ...u, id: Date.now() }]);
+  const editarUsuario   = (id, u) => salvarUsuarios(usuariosRegistrados.map(x => x.id === id ? { ...x, ...u } : x));
+  const eliminarUsuario = (id) => salvarUsuarios(usuariosRegistrados.filter(x => x.id !== id));
+  // ────────────────────────────────────────────────────────────────────────────
 
   const handleCotizar = (e) => {
     e.preventDefault();
@@ -98,9 +174,24 @@ function App() {
       setCotizacion("Por favor selecciona una comuna.");
       return;
     }
-    const base = { privado: 15000, ejecutivo: 25000, van: 35000 }[cotizador.servicio];
+    const svc   = servicios.find(s => s.id === cotizador.servicio);
+    const base  = svc?.precioBase ?? 15000;
     const total = base + (Number(cotizador.pasajeros) - 1) * 5000;
-    setCotizacion(`✓ Cotización a ${cotizador.comuna}: ${formatearPrecio(total)} para ${cotizador.pasajeros} pasajeros (${cotizador.servicio})`);
+
+    salvarReservas([...reservas, {
+      id:            Date.now(),
+      creadaEn:      new Date().toLocaleString("es-CL"),
+      fechaTraslado: cotizador.fecha || "Sin especificar",
+      comuna:        cotizador.comuna,
+      servicio:      svc?.nombre ?? cotizador.servicio,
+      pasajeros:     Number(cotizador.pasajeros),
+      totalCLP:      total,
+      estado:        "pendiente"
+    }]);
+
+    setCotizacion(
+      `✓ Cotización a ${cotizador.comuna}: ${formatearPrecio(total)} para ${cotizador.pasajeros} pasajero(s) (${svc?.nombre ?? cotizador.servicio})`
+    );
   };
 
   // Recibe datos del componente CrearCuenta y actualiza el arreglo de inscritos
@@ -108,18 +199,25 @@ function App() {
     if (usuariosRegistrados.some((u) => u.email === datos.email)) {
       return { exito: false, mensaje: "El email ya está registrado." };
     }
-    setUsuariosRegistrados((prev) => [...prev, { ...datos }]);
+    salvarUsuarios([...usuariosRegistrados, { ...datos, id: Date.now(), rol: "usuario" }]);
     return { exito: true, mensaje: "✓ ¡Registro exitoso! Ahora puedes iniciar sesión." };
   };
 
   // Recibe credenciales del componente IniciarSesion y valida contra el arreglo de inscritos
   const handleLogin = (email, contrasena, recordarme) => {
+    // Acceso administrador
+    if (email === ADMIN_EMAIL && contrasena === ADMIN_PASS) {
+      const admin = { nombre: "Administrador", email: ADMIN_EMAIL, esAdmin: true };
+      if (recordarme) localStorage.setItem("usuarioLogueado", email);
+      setUsuarioActual(admin);
+      return { exito: true, mensaje: "✓ ¡Bienvenido Administrador!" };
+    }
     const encontrado = usuariosRegistrados.find(
       (u) => u.email === email && u.contrasena === contrasena
     );
     if (!encontrado) return { exito: false, mensaje: "Email o contraseña incorrectos." };
     if (recordarme) localStorage.setItem("usuarioLogueado", email);
-    setUsuarioActual(encontrado);
+    setUsuarioActual({ ...encontrado, esAdmin: encontrado.rol === "admin" });
     return { exito: true, mensaje: `✓ ¡Bienvenido ${encontrado.nombre}!` };
   };
 
@@ -148,8 +246,26 @@ function App() {
             </div>
             {usuarioActual ? (
               <div className="user-profile">
-                <div className="user-avatar"><i className="fas fa-user"></i></div>
+                <div className={`user-avatar ${usuarioActual.esAdmin ? "admin-avatar" : ""}`}>
+                  <i className={`fas ${usuarioActual.esAdmin ? "fa-shield-halved" : "fa-user"}`}></i>
+                </div>
                 <span className="user-name">{usuarioActual.nombre.split(" ")[0]}</span>
+                {usuarioActual.esAdmin && (
+                  <>
+                    <button
+                      className="auth-btn admin-nav-pill"
+                      onClick={() => { setPanelTab("dashboard"); setPanelAdminOpen(true); }}
+                    >
+                      <i className="fas fa-gauge"></i> Panel
+                    </button>
+                    <button
+                      className="auth-btn configuracion-btn"
+                      onClick={() => { setPanelTab("configuracion"); setPanelAdminOpen(true); }}
+                    >
+                      <i className="fas fa-gear"></i> Configuración
+                    </button>
+                  </>
+                )}
                 <button
                   className="auth-btn login-btn"
                   onClick={() => { setUsuarioActual(null); localStorage.removeItem("usuarioLogueado"); }}
@@ -277,7 +393,7 @@ function App() {
           </div>
           <div className="destinos-grid">
             {destinos.map((d) => (
-              <div key={d.nombre} className="destino-card">
+              <div key={d.id ?? d.nombre} className="destino-card">
                 <div className="destino-img" style={{ backgroundImage: `url('${d.imagen}')` }}>
                   <span className="destino-label">{d.nombre}</span>
                 </div>
@@ -373,6 +489,7 @@ function App() {
         <i className="fab fa-whatsapp"></i>
       </a>
 
+
       {/* Componente IniciarSesion: formulario controlado con validación por estado */}
       <IniciarSesion
         isOpen={loginOpen}
@@ -388,6 +505,30 @@ function App() {
         onRegistro={handleRegistro}
         onIrALogin={() => setLoginOpen(true)}
       />
+
+      {/* Panel de administrador: CRUD completo + dashboard con APIs */}
+      {panelAdminOpen && (
+        <PanelAdmin
+          initialTab={panelTab}
+          onCerrar={() => setPanelAdminOpen(false)}
+          destinos={destinos}
+          servicios={servicios}
+          reservas={reservas}
+          usuarios={usuariosRegistrados}
+          tasasCambio={tasasCambio}
+          onAgregarDestino={agregarDestino}
+          onEditarDestino={editarDestino}
+          onEliminarDestino={eliminarDestino}
+          onAgregarServicio={agregarServicio}
+          onEditarServicio={editarServicio}
+          onEliminarServicio={eliminarServicio}
+          onActualizarReserva={actualizarReserva}
+          onEliminarReserva={eliminarReserva}
+          onAgregarUsuario={agregarUsuario}
+          onEditarUsuario={editarUsuario}
+          onEliminarUsuario={eliminarUsuario}
+        />
+      )}
     </>
   );
 }
